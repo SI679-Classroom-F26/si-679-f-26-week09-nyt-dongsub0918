@@ -6,7 +6,7 @@
 export const getJwtSecret = (): string => {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
-    throw new Error('JWT_SECRET is not set. Copy .env.example to .env.');
+    throw new Error("JWT_SECRET is not set. Copy .env.example to .env.");
   }
   return secret;
 };
@@ -14,5 +14,13 @@ export const getJwtSecret = (): string => {
 // #region client-origin
 // The one origin whose pages may call this server from a browser.
 export const getClientOrigin = (): string =>
-  process.env.CLIENT_ORIGIN ?? 'http://localhost:5173';
+  process.env.CLIENT_ORIGIN ?? "http://localhost:5173";
 // #endregion client-origin
+
+// The defaults are your laptop's values; .env can override them.
+export const getPort = (): number => Number(process.env.PORT ?? 6790);
+
+export const getMongoUri = (): string =>
+  process.env.MONGO_URI ?? "mongodb://127.0.0.1:27017";
+
+export const getDbName = (): string => process.env.DB_NAME ?? "week9";

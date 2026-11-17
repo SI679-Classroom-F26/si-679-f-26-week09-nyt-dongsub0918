@@ -2,11 +2,13 @@
 // One place that knows how to talk to the server. Every function in
 // src/api/ that reaches the server goes through apiFetch.
 
-import { getToken } from './session.ts';
+import { getToken } from "./session.ts";
 
 // From client/.env. Vite only hands the browser variables that start with
 // VITE_, and only reads .env when `npm run dev` starts.
-const API_URL = import.meta.env.VITE_API_URL;
+// No VITE_API_URL (as on the server)? Use the page's own address.
+export const API_URL = import.meta.env.VITE_API_URL ?? window.location.origin;
+
 // #endregion api-url
 
 type Options = {
@@ -17,25 +19,25 @@ type Options = {
 // #region api-fetch
 export const apiFetch = async (
   path: string,
-  options: Options = {}
+  options: Options = {},
 ): Promise<any> => {
   const headers: Record<string, string> = {};
 
   // Sending JSON? Say so, so express.json() will read it.
   if (options.body !== undefined) {
-    headers['Content-Type'] = 'application/json';
+    headers["Content-Type"] = "application/json";
   }
 
   // Logged in? Grab the token from the session and add it to the header.
   const token = getToken();
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   const res = await fetch(`${API_URL}${path}`, {
-    method: options.method ?? 'GET',
+    method: options.method ?? "GET",
     headers,
-    body: options.body === undefined ? undefined : JSON.stringify(options.body)
+    body: options.body === undefined ? undefined : JSON.stringify(options.body),
   });
 
   // Not every response has a JSON body (Express's own 404 page is HTML),

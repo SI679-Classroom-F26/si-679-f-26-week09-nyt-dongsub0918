@@ -1,11 +1,10 @@
 // Live updates from the server, over a WebSocket, using socket.io.
 
 // #region connect
-import { io } from 'socket.io-client';
-import type { Socket } from 'socket.io-client';
-import { getToken } from './session.ts';
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { io } from "socket.io-client";
+import type { Socket } from "socket.io-client";
+import { getToken } from "./session.ts";
+import { API_URL } from "./client.ts";
 
 // One socket for the whole app, made the first time a screen subscribes.
 let socket: Socket | null = null;
@@ -15,7 +14,7 @@ const getSocket = (): Socket => {
     socket = io(API_URL, {
       // A function, not a value: socket.io calls it every time it
       // (re)connects, so it always sends the token we have *now*.
-      auth: (send) => send({ token: getToken() })
+      auth: (send) => send({ token: getToken() }),
     });
   }
   return socket;
@@ -29,7 +28,7 @@ const getSocket = (): Socket => {
 // #region subscribe
 export const subscribe = (
   event: string,
-  handler: (data: any) => void
+  handler: (data: any) => void,
 ): (() => void) => {
   const s = getSocket();
   s.on(event, handler);
